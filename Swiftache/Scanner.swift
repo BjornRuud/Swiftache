@@ -8,6 +8,8 @@
 
 import Foundation
 
+typealias CharacterEnumerationHandler = (character: String, location: TextLocation, range: NSRange, inout stop: Bool) -> Void
+
 struct TextLocation {
     var position = 0
     var line = 0
@@ -23,8 +25,16 @@ public class Scanner {
     private(set) var fileURL: NSURL
     private(set) var fileEncoding: NSStringEncoding
 
-    private let text: NSString
-    private let data: NSData
+    let text: NSString
+    let data: NSData
+
+    private(set) var currentCharRange: NSRange = NSRange(location: 0, length: 0)
+    private(set) var currentCharLocation = TextLocation()
+    private(set) var searchRange: NSRange
+    private(set) var nextCharLocation = TextLocation()
+
+    private let newlineSet = NSCharacterSet.newlineCharacterSet()
+    private let whitespaceSet = NSCharacterSet.whitespaceCharacterSet()
 
     init(fileURL: NSURL, encoding: NSStringEncoding) {
         self.fileURL = fileURL
@@ -36,24 +46,40 @@ public class Scanner {
 
         let possibleText: NSString? = NSString(bytesNoCopy: UnsafeMutablePointer<Void>(data.bytes), length: data.length, encoding: encoding, freeWhenDone: false)
         text = possibleText ?? NSString()
+
+        searchRange = NSRange(location: 0, length: text.length)
     }
 
     convenience init(fileURL: NSURL) {
         self.init(fileURL: fileURL, encoding: NSUTF8StringEncoding)
     }
 
-    init(text: String) {
+    init(text: NSString) {
         fileURL = NSURL()
         fileEncoding = NSUTF8StringEncoding
         self.text = text
         data = NSData()
+        searchRange = NSRange(location: 0, length: self.text.length)
     }
 
-    func enumerateCharacters(charHandler: (character: String, location: TextLocation, range: NSRange, inout stop: Bool) -> Void) -> CharacterEnumerationResult {
+    func characterIsNewline(char: String) -> Bool {
+        let newlineRange = char.rangeOfCharacterFromSet(newlineSet)
+        return newlineRange != nil
+    }
+
+    func characterIsWhitespace(char: String) -> Bool {
+        let whitespaceRange = char.rangeOfCharacterFromSet(whitespaceSet)
+        return whitespaceRange != nil
+    }
+
+    func enumerateCharacters(charHandler: CharacterEnumerationHandler) -> CharacterEnumerationResult {
+        return enumerateCharactersInRange(NSRange(location: 0, length: text.length), charHandler: charHandler)
+    }
+
+    func enumerateCharactersInRange(range: NSRange, charHandler: CharacterEnumerationHandler) -> CharacterEnumerationResult {
         var locSummary = TextLocation()
         var result = CharacterEnumerationResult()
-        let newlineSet = NSCharacterSet.newlineCharacterSet()
-        text.enumerateSubstringsInRange(NSRange(location: 0, length: text.length), options: .ByComposedCharacterSequences) {
+        text.enumerateSubstringsInRange(range, options: .ByComposedCharacterSequences) {
             (subString, subStringRange, enclosingRange, stop) -> Void in
 
             var stopEnumeration = false
@@ -62,8 +88,7 @@ public class Scanner {
             // Update location for next character
             locSummary.position++
             // Check for newlines (U+000A–U+000D, U+0085)
-            let newlineRange = subString.rangeOfCharacterFromSet(newlineSet)
-            if newlineRange != nil {
+            if self.characterIsNewline(subString) {
                 locSummary.line++
                 locSummary.column = 0
             } else {
@@ -76,7 +101,36 @@ public class Scanner {
         }
         result.characters = locSummary.position
         result.lines = locSummary.line + 1
-
+        
         return result
+    }
+
+    func getCharacter() -> String {
+        if searchRange.location >= text.length {
+            // EOF
+            return ""
+        }
+
+        var char: String?
+        currentCharLocation = nextCharLocation
+        text.enumerateSubstringsInRange(searchRange, options: .ByComposedCharacterSequences) {
+            (subString, subStringRange, enclosingRange, stop) -> Void in
+
+            char = subString
+            self.currentCharRange = subStringRange
+            self.searchRange.location += subStringRange.length
+            stop.memory = ObjCBool(true)
+        }
+        // Update location for next character
+        nextCharLocation.position++
+        // Check for newlines (U+000A–U+000D, U+0085)
+        if char != nil && characterIsNewline(char!) {
+            nextCharLocation.line++
+            nextCharLocation.column = 0
+        } else {
+            nextCharLocation.column++
+        }
+
+        return char ?? ""
     }
 }

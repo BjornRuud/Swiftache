@@ -20,6 +20,8 @@
 		8E6E232D19B497CB008A664B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E232C19B497CB008A664B /* Lexer.swift */; };
 		8E6E232E19B497CB008A664B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E232C19B497CB008A664B /* Lexer.swift */; };
 		8E6E232F19B497CB008A664B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E232C19B497CB008A664B /* Lexer.swift */; };
+		8E6E233019B64AE7008A664B /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A2F919B4618B0096B590 /* Scanner.swift */; };
+		8EA1C86A19B73E25000C2038 /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86919B73E25000C2038 /* LexerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,7 @@
 		8E6E232119B48CAC008A664B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E6E232219B48CAC008A664B /* SwiftacheDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftacheDemoTests.swift; sourceTree = "<group>"; };
 		8E6E232C19B497CB008A664B /* Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lexer.swift; sourceTree = "<group>"; };
+		8EA1C86919B73E25000C2038 /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +139,7 @@
 		8E01A2EC19B461650096B590 /* SwiftacheTests */ = {
 			isa = PBXGroup;
 			children = (
+				8EA1C86919B73E25000C2038 /* LexerTests.swift */,
 				8E01A2EF19B461650096B590 /* SwiftacheTests.swift */,
 				8E01A2ED19B461650096B590 /* Supporting Files */,
 			);
@@ -368,6 +372,7 @@
 			files = (
 				8E01A2FB19B4618B0096B590 /* Scanner.swift in Sources */,
 				8E6E232E19B497CB008A664B /* Lexer.swift in Sources */,
+				8EA1C86A19B73E25000C2038 /* LexerTests.swift in Sources */,
 				8E01A2F019B461650096B590 /* SwiftacheTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -379,6 +384,7 @@
 				8E6E231219B48CAC008A664B /* DetailViewController.swift in Sources */,
 				8E6E231019B48CAC008A664B /* MasterViewController.swift in Sources */,
 				8E6E232F19B497CB008A664B /* Lexer.swift in Sources */,
+				8E6E233019B64AE7008A664B /* Scanner.swift in Sources */,
 				8E6E230E19B48CAC008A664B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -665,6 +671,7 @@
 				8E6E232519B48CAC008A664B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8E6E232919B48CAC008A664B /* Build configuration list for PBXNativeTarget "SwiftacheDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -673,6 +680,7 @@
 				8E6E232719B48CAC008A664B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
