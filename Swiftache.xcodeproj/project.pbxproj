@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		8E01A2E619B461650096B590 /* Swiftache.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E01A2E519B461650096B590 /* Swiftache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E01A2F019B461650096B590 /* SwiftacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A2EF19B461650096B590 /* SwiftacheTests.swift */; };
-		8E01A2FA19B4618B0096B590 /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A2F919B4618B0096B590 /* Scanner.swift */; };
-		8E01A2FB19B4618B0096B590 /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A2F919B4618B0096B590 /* Scanner.swift */; };
 		8E6E230E19B48CAC008A664B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E230D19B48CAC008A664B /* AppDelegate.swift */; };
 		8E6E231019B48CAC008A664B /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E230F19B48CAC008A664B /* MasterViewController.swift */; };
 		8E6E231219B48CAC008A664B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E231119B48CAC008A664B /* DetailViewController.swift */; };
@@ -20,8 +18,15 @@
 		8E6E232D19B497CB008A664B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E232C19B497CB008A664B /* Lexer.swift */; };
 		8E6E232E19B497CB008A664B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E232C19B497CB008A664B /* Lexer.swift */; };
 		8E6E232F19B497CB008A664B /* Lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E232C19B497CB008A664B /* Lexer.swift */; };
-		8E6E233019B64AE7008A664B /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A2F919B4618B0096B590 /* Scanner.swift */; };
 		8EA1C86A19B73E25000C2038 /* LexerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86919B73E25000C2038 /* LexerTests.swift */; };
+		8EA1C86C19B7591C000C2038 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86B19B7591C000C2038 /* Parser.swift */; };
+		8EA1C86D19B7591C000C2038 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86B19B7591C000C2038 /* Parser.swift */; };
+		8EA1C86E19B7591C000C2038 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86B19B7591C000C2038 /* Parser.swift */; };
+		8EA1C87019B84E06000C2038 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86F19B84E05000C2038 /* Template.swift */; };
+		8EA1C87119B84E06000C2038 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86F19B84E05000C2038 /* Template.swift */; };
+		8EA1C87219B84E06000C2038 /* Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1C86F19B84E05000C2038 /* Template.swift */; };
+		8EA1C87719B85A0A000C2038 /* list.html in Resources */ = {isa = PBXBuildFile; fileRef = 8EA1C87419B859F3000C2038 /* list.html */; };
+		8EA1C87819B85A0B000C2038 /* list.html in Resources */ = {isa = PBXBuildFile; fileRef = 8EA1C87419B859F3000C2038 /* list.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,7 +53,6 @@
 		8E01A2EB19B461650096B590 /* SwiftacheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftacheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E01A2EE19B461650096B590 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E01A2EF19B461650096B590 /* SwiftacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftacheTests.swift; sourceTree = "<group>"; };
-		8E01A2F919B4618B0096B590 /* Scanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
 		8E6E230919B48CAC008A664B /* SwiftacheDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftacheDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6E230C19B48CAC008A664B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E6E230D19B48CAC008A664B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +65,10 @@
 		8E6E232219B48CAC008A664B /* SwiftacheDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftacheDemoTests.swift; sourceTree = "<group>"; };
 		8E6E232C19B497CB008A664B /* Lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lexer.swift; sourceTree = "<group>"; };
 		8EA1C86919B73E25000C2038 /* LexerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexerTests.swift; sourceTree = "<group>"; };
+		8EA1C86B19B7591C000C2038 /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
+		8EA1C86F19B84E05000C2038 /* Template.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Template.swift; sourceTree = "<group>"; };
+		8EA1C87419B859F3000C2038 /* list.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = list.html; sourceTree = "<group>"; };
+		8EA1C87619B859F3000C2038 /* Mustache EBNF.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Mustache EBNF.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +106,8 @@
 		8E01A2D619B461650096B590 = {
 			isa = PBXGroup;
 			children = (
+				8EA1C87319B859F3000C2038 /* Examples */,
+				8EA1C87519B859F3000C2038 /* Docs */,
 				8E01A2E219B461650096B590 /* Swiftache */,
 				8E01A2EC19B461650096B590 /* SwiftacheTests */,
 				8E6E230A19B48CAC008A664B /* SwiftacheDemo */,
@@ -120,10 +130,11 @@
 		8E01A2E219B461650096B590 /* Swiftache */ = {
 			isa = PBXGroup;
 			children = (
-				8E01A2F919B4618B0096B590 /* Scanner.swift */,
 				8E6E232C19B497CB008A664B /* Lexer.swift */,
+				8EA1C86B19B7591C000C2038 /* Parser.swift */,
 				8E01A2E319B461650096B590 /* Supporting Files */,
 				8E01A2E519B461650096B590 /* Swiftache.h */,
+				8EA1C86F19B84E05000C2038 /* Template.swift */,
 			);
 			path = Swiftache;
 			sourceTree = "<group>";
@@ -190,6 +201,22 @@
 				8E6E232119B48CAC008A664B /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8EA1C87319B859F3000C2038 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				8EA1C87419B859F3000C2038 /* list.html */,
+			);
+			path = Examples;
+			sourceTree = "<group>";
+		};
+		8EA1C87519B859F3000C2038 /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				8EA1C87619B859F3000C2038 /* Mustache EBNF.txt */,
+			);
+			path = Docs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -335,6 +362,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EA1C87719B85A0A000C2038 /* list.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,6 +372,7 @@
 			files = (
 				8E6E231519B48CAC008A664B /* Main.storyboard in Resources */,
 				8E6E231719B48CAC008A664B /* Images.xcassets in Resources */,
+				8EA1C87819B85A0B000C2038 /* list.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,7 +391,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E6E232D19B497CB008A664B /* Lexer.swift in Sources */,
-				8E01A2FA19B4618B0096B590 /* Scanner.swift in Sources */,
+				8EA1C87019B84E06000C2038 /* Template.swift in Sources */,
+				8EA1C86C19B7591C000C2038 /* Parser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,8 +400,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E01A2FB19B4618B0096B590 /* Scanner.swift in Sources */,
 				8E6E232E19B497CB008A664B /* Lexer.swift in Sources */,
+				8EA1C86D19B7591C000C2038 /* Parser.swift in Sources */,
+				8EA1C87119B84E06000C2038 /* Template.swift in Sources */,
 				8EA1C86A19B73E25000C2038 /* LexerTests.swift in Sources */,
 				8E01A2F019B461650096B590 /* SwiftacheTests.swift in Sources */,
 			);
@@ -383,8 +414,9 @@
 			files = (
 				8E6E231219B48CAC008A664B /* DetailViewController.swift in Sources */,
 				8E6E231019B48CAC008A664B /* MasterViewController.swift in Sources */,
+				8EA1C86E19B7591C000C2038 /* Parser.swift in Sources */,
 				8E6E232F19B497CB008A664B /* Lexer.swift in Sources */,
-				8E6E233019B64AE7008A664B /* Scanner.swift in Sources */,
+				8EA1C87219B84E06000C2038 /* Template.swift in Sources */,
 				8E6E230E19B48CAC008A664B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

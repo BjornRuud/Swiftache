@@ -22,7 +22,7 @@ class LexerTests: XCTestCase {
     }
 
     func testVariable() {
-        let template = "{{mustache}}"
+        let template = Template(text: "{{mustache}}")
         let refTokens: [Token] = [
             Token(type: .TagBegin, textRange: NSRange(location: 0, length: 2)),
             Token(type: .Identifier, textRange: NSRange(location: 2, length: 8)),
@@ -30,10 +30,31 @@ class LexerTests: XCTestCase {
             Token(type: .EOF, textRange: NSRange(location: 12, length: 0))
         ]
 
-        let scanner = Scanner(text: template)
-        let lexer = Lexer(scanner: scanner)
+        let lexer = Lexer(template: template)
         let tokens = lexer.allTokens()
         XCTAssertEqual(refTokens, tokens, "Reference tokens not same as processed tokens")
+    }
+
+    func testComplexFile() {
+        let fileURL = NSBundle.mainBundle().URLForResource("list", withExtension: "html")
+        XCTAssertNotNil(fileURL, "Missing template.")
+        let template = Template(fileURL: fileURL!)
+        let lexer = Lexer(template: template)
+        let tokens = lexer.allTokens()
+        XCTAssertEqual(tokens.count, 58, "Wrong token count!")
+    }
+
+    func testSmallTemplatePerformance() {
+        measureBlock {
+            let fileURL = NSBundle.mainBundle().URLForResource("list", withExtension: "html")
+            XCTAssertNotNil(fileURL, "Missing template.")
+            let template = Template(fileURL: fileURL!)
+            let lexer = Lexer(template: template)
+            var token: Token!
+            do {
+                token = lexer.getToken()
+            } while token.type != .EOF
+        }
     }
 
 }

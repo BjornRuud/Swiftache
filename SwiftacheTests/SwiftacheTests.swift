@@ -21,26 +21,13 @@ class SwiftacheTests: XCTestCase {
         super.tearDown()
     }
 
-    func testScanner() {
-        //let scanner = Scanner(fileURL: NSURL(string: "http://localhost"), encoding: NSUTF8StringEncoding)
-        let scanner = Scanner(text: "Behold, Mustache!\n{{awesome}}")
-        let result = scanner.enumerateCharacters { (character, location, range, stop) -> Void in
-            println("\(character) (pos: \(location.position), line: \(location.line), col: \(location.column))")
-        }
-        println("\(result.characters) characters, \(result.lines) lines")
-    }
-
     func testLexer() {
         let singleExample = "Behold, Mustache!\n{{awesome}}"
         let sectionExample = "Test\u{2028} {{#section}}Yo! {{! FIXME \u{1F60E}}}{{& yo}}{{/section}}\n{{{triple_madness}}}\r\nThe End"
 
-        let scanner = Scanner(text: sectionExample)
-        let lexer = Lexer(scanner: scanner)
+        let template = Template(text: sectionExample)
+        let lexer = Lexer(template: template)
         let tokens = lexer.allTokens()
-        for token in tokens {
-            let subString = scanner.text.substringWithRange(token.textRange)
-            println("\(token.debugDescription) = \(subString)")
-        }
         let location = lexer.textLocationForRange(tokens[tokens.endIndex - 1].textRange)
         println("pos: \(location.position), line: \(location.line), col: \(location.column)")
     }

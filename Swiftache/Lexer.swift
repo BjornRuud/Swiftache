@@ -27,6 +27,12 @@ public enum TokenType: String {
     case Unescape = "Unescape"
 }
 
+struct TextLocation {
+    var position = 0
+    var line = 0
+    var column = 0
+}
+
 public class Token: Equatable {
     private(set) var type: TokenType
     private(set) var textRange: NSRange
@@ -50,7 +56,7 @@ public func ==(lhs: Token, rhs: Token) -> Bool {
 }
 
 public class Lexer {
-    let scanner: Scanner
+    let template: Template
 
     private var searchRange = NSRange(location: 0, length: 0)
     private var tagRange = NSRange(location: 0, length: 0)
@@ -60,8 +66,8 @@ public class Lexer {
     private let identifierRegex = NSRegularExpression(pattern: "^\\s*(.*?)\\s*$", options: .UseUnicodeWordBoundaries, error: nil)
     private let newlineRegex = NSRegularExpression(pattern: "\\r\\n|\\n|\\r|\\u2028|\\u2029", options: .UseUnicodeWordBoundaries, error: nil)
 
-    init(scanner: Scanner) {
-        self.scanner = scanner
+    init(template: Template) {
+        self.template = template
     }
 
     func getToken() -> Token {
@@ -70,7 +76,7 @@ public class Lexer {
             return tokenQueue.removeAtIndex(0)
         }
 
-        let text = scanner.text
+        let text = template.text
         let textLength = text.length
         searchRange.location = tagRange.location + tagRange.length
         searchRange.length = textLength - searchRange.location
@@ -121,25 +127,27 @@ public class Lexer {
         if beginToken.type == .TagBegin {
             let typeRange = NSRange(location: contentRange.location, length: 1)
             let typeMarker = text.substringWithRange(typeRange)
+            var tagType: TokenType = .Unknown
             switch typeMarker {
             case "#":
-                typeToken = Token(type: .SectionBegin, textRange: typeRange)
+                tagType = .SectionBegin
             case "^":
-                typeToken = Token(type: .SectionBeginInverted, textRange: typeRange)
+                tagType = .SectionBeginInverted
             case "/":
-                typeToken = Token(type: .SectionEnd, textRange: typeRange)
+                tagType = .SectionEnd
             case "&":
-                typeToken = Token(type: .Unescape, textRange: typeRange)
+                tagType = .Unescape
             case "!":
-                typeToken = Token(type: .Comment, textRange: typeRange)
+                tagType = .Comment
                 contentType = .CommentText
             case ">":
-                typeToken = Token(type: .Partial, textRange: typeRange)
+                tagType = .Partial
                 contentType = .PartialName
             default:
                 break
             }
-            if typeToken != nil {
+            if tagType != .Unknown {
+                typeToken = Token(type: tagType, textRange: typeRange)
                 contentRange.location++
                 contentRange.length--
             }
@@ -164,12 +172,18 @@ public class Lexer {
         return beginToken
     }
 
+    func reset() {
+        searchRange = NSRange(location: 0, length: 0)
+        tagRange = NSRange(location: 0, length: 0)
+        tokenQueue = [Token]()
+    }
+
     func textLocationForRange(range: NSRange) -> TextLocation {
         var loc = TextLocation()
         loc.position = range.location
         // Count newlines up to range location
-        var searchRange = NSRange(location: 0, length: range.location)
-        let matches = newlineRegex.matchesInString(scanner.text, options: NSMatchingOptions(0), range: searchRange) as [NSTextCheckingResult]
+        let searchRange = NSRange(location: 0, length: range.location)
+        let matches = newlineRegex.matchesInString(template.text, options: NSMatchingOptions(0), range: searchRange) as [NSTextCheckingResult]
         if matches.isEmpty {
             loc.column = range.location
         } else {
@@ -190,5 +204,13 @@ public class Lexer {
         } while token.type != .EOF
 
         return allTokens
+    }
+}
+
+extension Lexer {
+    func debugDescriptionForToken(token: Token) -> String {
+        let subString = template.text.substringWithRange(token.textRange)
+        var desc = token.debugDescription + " = \(subString)"
+        return desc
     }
 }

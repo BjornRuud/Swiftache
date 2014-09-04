@@ -1,0 +1,18 @@
+Mustache EBNF
+
+character = ? all visible characters ? ;
+newline = ? all newline characters ? ;
+whitespace = ? all whitespace characters ? ;
+any whitespace = whitespace | newline ;
+any character = character | any whitespace ;
+variable = { character } ;
+tag begin = "{{" ;
+tag end = "}}" ;
+triple begin = "{{{" ;
+triple end = "}}}" ;
+variabletag = tag begin, [ "&" ], [{ any whitespace }], variable, [{ any whitespace }], tag end ;
+section begin = tag begin, "#", [{ any whitespace }], variable, [{ any whitespace }], tag end ;
+section end = tag begin, "/", [{ any whitespace }], variable, [{ any whitespace }], tag end ;
+comment = tag begin, "!", [{ any whitespace }], [character, [{ any character }, character]], [{ any whitespace }], tag end ;
+partial = tag begin, ">", [{ any whitespace }], character, [{ character | whitespace }, character], [{ any whitespace }], tag end ;
+triple = triple begin, [{ any whitespace }], variable, [{ any whitespace }], triple end ;
