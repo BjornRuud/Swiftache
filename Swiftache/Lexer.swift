@@ -62,12 +62,19 @@ public class Lexer {
     private var tagRange = NSRange(location: 0, length: 0)
     private var tokenQueue = [Token]()
 
-    private let tagRegex = NSRegularExpression(pattern: "\\{\\{\\{.*?\\}\\}\\}|\\{\\{.*?\\}\\}", options: .UseUnicodeWordBoundaries, error: nil)
-    private let identifierRegex = NSRegularExpression(pattern: "^\\s*(.*?)\\s*$", options: .UseUnicodeWordBoundaries, error: nil)
+    private let tagBeginRegex = NSRegularExpression(pattern: "\\{\\{\\{?", options: .UseUnicodeWordBoundaries, error: nil)
+    private let tagEndRegex = NSRegularExpression(pattern: "\\}?\\}\\}", options: .UseUnicodeWordBoundaries, error: nil)
+    private let identifierRegex = NSRegularExpression(pattern: "^\\s*(.*?)\\s*$", options: .UseUnicodeWordBoundaries | .DotMatchesLineSeparators, error: nil)
     private let newlineRegex = NSRegularExpression(pattern: "\\r\\n|\\n|\\r|\\u2028|\\u2029", options: .UseUnicodeWordBoundaries, error: nil)
 
     init(template: Template) {
         self.template = template
+    }
+
+    func reset() {
+        searchRange = NSRange(location: 0, length: 0)
+        tagRange = NSRange(location: 0, length: 0)
+        tokenQueue = [Token]()
     }
 
     func getToken() -> Token {
@@ -83,46 +90,57 @@ public class Lexer {
 
         // Check for EOF
         if searchRange.location >= textLength {
-            tagRange = NSRange(location: textLength, length: 0)
+            tagRange.location = textLength
+            tagRange.length = 0
             return Token(type: .EOF, textRange: tagRange)
         }
 
-        // Look for tag
-        tagRange = tagRegex.rangeOfFirstMatchInString(text, options: NSMatchingOptions(0), range: searchRange)
-        if tagRange.location == NSNotFound {
+        // Look for beginning of tag
+        let tagBeginRange = tagBeginRegex.rangeOfFirstMatchInString(text, options: NSMatchingOptions(0), range: searchRange)
+        if tagBeginRange.location == NSNotFound {
             // No tag found, the rest is static text
             tagRange = searchRange
             return Token(type: .StaticText, textRange: tagRange)
         }
 
-        if tagRange.location > searchRange.location {
-            // Tag found, but handle static text search has skipped over first
-            tagRange = NSRange(location: searchRange.location, length: tagRange.location - searchRange.location)
-            return Token(type: .StaticText, textRange: tagRange)
+        if tagBeginRange.location > searchRange.location {
+            // Beginning of tag was found, but handle skipped static text first
+            tagRange.location = searchRange.location
+            tagRange.length = tagBeginRange.location - searchRange.location
+            tokenQueue.append(Token(type: .StaticText, textRange: tagRange))
         }
 
-        var beginToken: Token!
+        // Determine if triple tag and enqueue appropriate token
+        let beginTagType: TokenType = tagBeginRange.length == 3 ? .TripleBegin : .TagBegin
+        let beginToken = Token(type: beginTagType, textRange: tagBeginRange)
+        tokenQueue.append(beginToken)
+
+        // Look for end of tag
         var endToken: Token!
-        var typeToken: Token?
-        var contentToken: Token?
-        var delimiterLength = 2
-
-        // Look for triple mustache
-        var contentRange = NSRange(location: tagRange.location + delimiterLength, length: tagRange.length - delimiterLength * 2)
-        var tripleCharRange = NSRange(location: tagRange.location + delimiterLength, length: 1)
-        let tripleChar = text.substringWithRange(tripleCharRange)
-        if tripleChar != "{" {
-            beginToken = Token(type: .TagBegin, textRange: NSRange(location: tagRange.location, length: delimiterLength))
-            endToken = Token(type: .TagEnd, textRange: NSRange(location: tagRange.location + tagRange.length - delimiterLength, length: delimiterLength))
+        searchRange.location = tagBeginRange.location + tagBeginRange.length
+        searchRange.length = textLength - searchRange.location
+        let tagEndRange = tagEndRegex.rangeOfFirstMatchInString(text, options: NSMatchingOptions(0), range: searchRange)
+        if tagEndRange.location == NSNotFound {
+            // No end tag found, treat everything after beginning of tag as static text
+            tagRange = searchRange
+            tokenQueue.append(Token(type: .StaticText, textRange: tagRange))
+            return tokenQueue.removeAtIndex(0)
         } else {
-            delimiterLength = 3
-            beginToken = Token(type: .TripleBegin, textRange: NSRange(location: tagRange.location, length: delimiterLength))
-            endToken = Token(type: .TripleEnd, textRange: NSRange(location: tagRange.location + tagRange.length - delimiterLength, length: delimiterLength))
-            contentRange.location += 1
-            contentRange.length -= 2
+            // Create end token but do not enqueue it until tag type and content
+            // tokens have been resolved
+            let endTagType: TokenType = tagEndRange.length == 3 ? .TripleEnd : .TagEnd
+            endToken = Token(type: endTagType, textRange: tagEndRange)
         }
+
+        // Set found tag range
+        tagRange.location = tagBeginRange.location
+        tagRange.length = tagEndRange.location + tagEndRange.length - tagBeginRange.location
+        // Set range of tag content
+        var contentRange = NSRange(location: tagBeginRange.location + tagBeginRange.length,
+                                   length: tagEndRange.location - (tagBeginRange.location + tagBeginRange.length))
 
         // Determine tag type, unless this is a triple stache tag
+        var typeToken: Token?
         var contentType: TokenType = .Identifier
         if beginToken.type == .TagBegin {
             let typeRange = NSRange(location: contentRange.location, length: 1)
@@ -153,14 +171,19 @@ public class Lexer {
             }
         }
 
-        // Extract tag content
-        let result = identifierRegex.firstMatchInString(text, options: NSMatchingOptions(0), range: contentRange)
-        if result?.numberOfRanges > 1 {
-            let matchedGroupRange = result!.rangeAtIndex(1)
-            contentToken = Token(type: contentType, textRange: matchedGroupRange)
+        // Find range of tag content if tag isn't empty
+        var contentToken: Token?
+        if contentRange.location != tagEndRange.location {
+            let result = identifierRegex.firstMatchInString(text, options: NSMatchingOptions(0), range: contentRange)
+            if result?.numberOfRanges > 1 {
+                let matchedGroupRange = result!.rangeAtIndex(1)
+                if matchedGroupRange.location != NSNotFound && matchedGroupRange.length != 0 {
+                    contentToken = Token(type: contentType, textRange: matchedGroupRange)
+                }
+            }
         }
 
-        // Return begin token and enqueue the rest
+        // Enqueue tokens and return first in queue
         if typeToken != nil {
             tokenQueue.append(typeToken!)
         }
@@ -169,13 +192,7 @@ public class Lexer {
         }
         tokenQueue.append(endToken)
 
-        return beginToken
-    }
-
-    func reset() {
-        searchRange = NSRange(location: 0, length: 0)
-        tagRange = NSRange(location: 0, length: 0)
-        tokenQueue = [Token]()
+        return tokenQueue.removeAtIndex(0)
     }
 
     func textLocationForRange(range: NSRange) -> TextLocation {
