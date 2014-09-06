@@ -90,6 +90,24 @@ class LexerTests: XCTestCase {
         }
     }
 
+    func testSection() {
+        var lexer = lexerWithText("{{#a}}{{/a}}")
+        var refTokens: [Token] = [
+            Token(type: .TagBegin, textRange: NSRange(location: 0, length: 2)),
+            Token(type: .SectionBegin, textRange: NSRange(location: 2, length: 1)),
+            Token(type: .Identifier, textRange: NSRange(location: 3, length: 1)),
+            Token(type: .TagEnd, textRange: NSRange(location: 4, length: 2)),
+
+            Token(type: .TagBegin, textRange: NSRange(location: 6, length: 2)),
+            Token(type: .SectionEnd, textRange: NSRange(location: 8, length: 1)),
+            Token(type: .Identifier, textRange: NSRange(location: 9, length: 1)),
+            Token(type: .TagEnd, textRange: NSRange(location: 10, length: 2)),
+            Token(type: .EOF, textRange: NSRange(location: 12, length: 0))
+        ]
+        var tokens = lexer.allTokens()
+        XCTAssertEqual(refTokens, tokens)
+    }
+
     func testComplexFile() {
         let fileURL = NSBundle.mainBundle().URLForResource("list", withExtension: "html")
         XCTAssertNotNil(fileURL, "Missing template.")

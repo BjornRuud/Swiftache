@@ -9,6 +9,24 @@
 /* Begin PBXBuildFile section */
 		8E01A2E619B461650096B590 /* Swiftache.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E01A2E519B461650096B590 /* Swiftache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8E01A2F019B461650096B590 /* SwiftacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E01A2EF19B461650096B590 /* SwiftacheTests.swift */; };
+		8E61EF9019B9999E0074A526 /* RenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF8F19B9999E0074A526 /* RenderTarget.swift */; };
+		8E61EF9119B9999E0074A526 /* RenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF8F19B9999E0074A526 /* RenderTarget.swift */; };
+		8E61EF9219B9999E0074A526 /* RenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF8F19B9999E0074A526 /* RenderTarget.swift */; };
+		8E61EF9419B99D330074A526 /* StringRenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9319B99D330074A526 /* StringRenderTarget.swift */; };
+		8E61EF9519B99D330074A526 /* StringRenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9319B99D330074A526 /* StringRenderTarget.swift */; };
+		8E61EF9619B99D330074A526 /* StringRenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9319B99D330074A526 /* StringRenderTarget.swift */; };
+		8E61EF9819B99D480074A526 /* FileRenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9719B99D480074A526 /* FileRenderTarget.swift */; };
+		8E61EF9919B99D480074A526 /* FileRenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9719B99D480074A526 /* FileRenderTarget.swift */; };
+		8E61EF9A19B99D480074A526 /* FileRenderTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9719B99D480074A526 /* FileRenderTarget.swift */; };
+		8E61EF9C19B9E4B30074A526 /* Array+Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9B19B9E4B30074A526 /* Array+Stack.swift */; };
+		8E61EF9D19B9E4B30074A526 /* Array+Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9B19B9E4B30074A526 /* Array+Stack.swift */; };
+		8E61EF9E19B9E4B30074A526 /* Array+Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EF9B19B9E4B30074A526 /* Array+Stack.swift */; };
+		8E61EFA419BA55AC0074A526 /* String+XML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EFA319BA55AC0074A526 /* String+XML.swift */; };
+		8E61EFA519BA55AC0074A526 /* String+XML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EFA319BA55AC0074A526 /* String+XML.swift */; };
+		8E61EFA619BA55AC0074A526 /* String+XML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EFA319BA55AC0074A526 /* String+XML.swift */; };
+		8E61EFA819BB4F1D0074A526 /* ParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61EFA719BB4F1D0074A526 /* ParserTests.swift */; };
+		8E61EFAA19BB88270074A526 /* simple partial.html in Resources */ = {isa = PBXBuildFile; fileRef = 8E61EFA919BB88270074A526 /* simple partial.html */; };
+		8E61EFAB19BB88270074A526 /* simple partial.html in Resources */ = {isa = PBXBuildFile; fileRef = 8E61EFA919BB88270074A526 /* simple partial.html */; };
 		8E6E230E19B48CAC008A664B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E230D19B48CAC008A664B /* AppDelegate.swift */; };
 		8E6E231019B48CAC008A664B /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E230F19B48CAC008A664B /* MasterViewController.swift */; };
 		8E6E231219B48CAC008A664B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6E231119B48CAC008A664B /* DetailViewController.swift */; };
@@ -53,6 +71,13 @@
 		8E01A2EB19B461650096B590 /* SwiftacheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftacheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E01A2EE19B461650096B590 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E01A2EF19B461650096B590 /* SwiftacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftacheTests.swift; sourceTree = "<group>"; };
+		8E61EF8F19B9999E0074A526 /* RenderTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RenderTarget.swift; path = Renderer/RenderTarget.swift; sourceTree = "<group>"; };
+		8E61EF9319B99D330074A526 /* StringRenderTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StringRenderTarget.swift; path = Renderer/StringRenderTarget.swift; sourceTree = "<group>"; };
+		8E61EF9719B99D480074A526 /* FileRenderTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FileRenderTarget.swift; path = Renderer/FileRenderTarget.swift; sourceTree = "<group>"; };
+		8E61EF9B19B9E4B30074A526 /* Array+Stack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Stack.swift"; sourceTree = "<group>"; };
+		8E61EFA319BA55AC0074A526 /* String+XML.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+XML.swift"; sourceTree = "<group>"; };
+		8E61EFA719BB4F1D0074A526 /* ParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParserTests.swift; sourceTree = "<group>"; };
+		8E61EFA919BB88270074A526 /* simple partial.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple partial.html"; sourceTree = "<group>"; };
 		8E6E230919B48CAC008A664B /* SwiftacheDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftacheDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E6E230C19B48CAC008A664B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E6E230D19B48CAC008A664B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -130,11 +155,14 @@
 		8E01A2E219B461650096B590 /* Swiftache */ = {
 			isa = PBXGroup;
 			children = (
+				8E61EF8E19B999640074A526 /* Render Targets */,
 				8E6E232C19B497CB008A664B /* Lexer.swift */,
 				8EA1C86B19B7591C000C2038 /* Parser.swift */,
 				8E01A2E319B461650096B590 /* Supporting Files */,
 				8E01A2E519B461650096B590 /* Swiftache.h */,
 				8EA1C86F19B84E05000C2038 /* Template.swift */,
+				8E61EF9B19B9E4B30074A526 /* Array+Stack.swift */,
+				8E61EFA319BA55AC0074A526 /* String+XML.swift */,
 			);
 			path = Swiftache;
 			sourceTree = "<group>";
@@ -151,8 +179,9 @@
 			isa = PBXGroup;
 			children = (
 				8EA1C86919B73E25000C2038 /* LexerTests.swift */,
-				8E01A2EF19B461650096B590 /* SwiftacheTests.swift */,
+				8E61EFA719BB4F1D0074A526 /* ParserTests.swift */,
 				8E01A2ED19B461650096B590 /* Supporting Files */,
+				8E01A2EF19B461650096B590 /* SwiftacheTests.swift */,
 			);
 			path = SwiftacheTests;
 			sourceTree = "<group>";
@@ -163,6 +192,16 @@
 				8E01A2EE19B461650096B590 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8E61EF8E19B999640074A526 /* Render Targets */ = {
+			isa = PBXGroup;
+			children = (
+				8E61EF9719B99D480074A526 /* FileRenderTarget.swift */,
+				8E61EF8F19B9999E0074A526 /* RenderTarget.swift */,
+				8E61EF9319B99D330074A526 /* StringRenderTarget.swift */,
+			);
+			name = "Render Targets";
 			sourceTree = "<group>";
 		};
 		8E6E230A19B48CAC008A664B /* SwiftacheDemo */ = {
@@ -207,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				8EA1C87419B859F3000C2038 /* list.html */,
+				8E61EFA919BB88270074A526 /* simple partial.html */,
 			);
 			path = Examples;
 			sourceTree = "<group>";
@@ -362,6 +402,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E61EFAA19BB88270074A526 /* simple partial.html in Resources */,
 				8EA1C87719B85A0A000C2038 /* list.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,6 +411,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E61EFAB19BB88270074A526 /* simple partial.html in Resources */,
 				8E6E231519B48CAC008A664B /* Main.storyboard in Resources */,
 				8E6E231719B48CAC008A664B /* Images.xcassets in Resources */,
 				8EA1C87819B85A0B000C2038 /* list.html in Resources */,
@@ -390,9 +432,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E61EF9819B99D480074A526 /* FileRenderTarget.swift in Sources */,
 				8E6E232D19B497CB008A664B /* Lexer.swift in Sources */,
+				8E61EF9C19B9E4B30074A526 /* Array+Stack.swift in Sources */,
+				8E61EFA419BA55AC0074A526 /* String+XML.swift in Sources */,
 				8EA1C87019B84E06000C2038 /* Template.swift in Sources */,
+				8E61EF9019B9999E0074A526 /* RenderTarget.swift in Sources */,
 				8EA1C86C19B7591C000C2038 /* Parser.swift in Sources */,
+				8E61EF9419B99D330074A526 /* StringRenderTarget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,9 +447,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E61EF9119B9999E0074A526 /* RenderTarget.swift in Sources */,
+				8E61EFA519BA55AC0074A526 /* String+XML.swift in Sources */,
+				8E61EF9D19B9E4B30074A526 /* Array+Stack.swift in Sources */,
 				8E6E232E19B497CB008A664B /* Lexer.swift in Sources */,
 				8EA1C86D19B7591C000C2038 /* Parser.swift in Sources */,
+				8E61EFA819BB4F1D0074A526 /* ParserTests.swift in Sources */,
 				8EA1C87119B84E06000C2038 /* Template.swift in Sources */,
+				8E61EF9919B99D480074A526 /* FileRenderTarget.swift in Sources */,
+				8E61EF9519B99D330074A526 /* StringRenderTarget.swift in Sources */,
 				8EA1C86A19B73E25000C2038 /* LexerTests.swift in Sources */,
 				8E01A2F019B461650096B590 /* SwiftacheTests.swift in Sources */,
 			);
@@ -413,9 +466,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E6E231219B48CAC008A664B /* DetailViewController.swift in Sources */,
+				8E61EFA619BA55AC0074A526 /* String+XML.swift in Sources */,
+				8E61EF9219B9999E0074A526 /* RenderTarget.swift in Sources */,
 				8E6E231019B48CAC008A664B /* MasterViewController.swift in Sources */,
+				8E61EF9A19B99D480074A526 /* FileRenderTarget.swift in Sources */,
 				8EA1C86E19B7591C000C2038 /* Parser.swift in Sources */,
 				8E6E232F19B497CB008A664B /* Lexer.swift in Sources */,
+				8E61EF9E19B9E4B30074A526 /* Array+Stack.swift in Sources */,
+				8E61EF9619B99D330074A526 /* StringRenderTarget.swift in Sources */,
 				8EA1C87219B84E06000C2038 /* Template.swift in Sources */,
 				8E6E230E19B48CAC008A664B /* AppDelegate.swift in Sources */,
 			);

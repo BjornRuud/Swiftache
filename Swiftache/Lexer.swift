@@ -27,10 +27,16 @@ public enum TokenType: String {
     case Unescape = "Unescape"
 }
 
-struct TextLocation {
+public struct TextLocation {
     var position = 0
     var line = 0
     var column = 0
+}
+
+extension TextLocation: DebugPrintable {
+    public var debugDescription: String {
+        return "position: \(position), line: \(line), column: \(column)"
+    }
 }
 
 public class Token: Equatable {
@@ -75,6 +81,11 @@ public class Lexer {
         searchRange = NSRange(location: 0, length: 0)
         tagRange = NSRange(location: 0, length: 0)
         tokenQueue = [Token]()
+    }
+
+    func setPosition(position: Int) {
+        reset()
+        tagRange.location = position
     }
 
     func getToken() -> Token {
