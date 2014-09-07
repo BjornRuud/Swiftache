@@ -16,7 +16,7 @@ public class Swiftache {
     public var context: RenderContext?
     public private(set) var error: ParseError?
 
-    init() {}
+    public init() {}
 
     public func render() -> Bool {
         error = nil

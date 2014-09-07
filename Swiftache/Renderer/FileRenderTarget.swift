@@ -15,7 +15,7 @@ public class FileRenderTarget {
 
     private let ostream: NSOutputStream!
 
-    init(fileURL: NSURL, encoding: NSStringEncoding = NSUTF8StringEncoding, append: Bool = false) {
+    public init(fileURL: NSURL, encoding: NSStringEncoding = NSUTF8StringEncoding, append: Bool = false) {
         fileEncoding = encoding
         // Verify url
         self.fileURL = fileURL

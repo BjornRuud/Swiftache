@@ -15,11 +15,11 @@ public class Template {
 
     private let data: NSData!
 
-    init(text: String) {
+    public init(text: String) {
         self.text = text
     }
 
-    init(fileURL: NSURL, encoding: NSStringEncoding) {
+    public init(fileURL: NSURL, encoding: NSStringEncoding) {
         self.fileURL = fileURL
         self.fileEncoding = encoding
 
@@ -29,7 +29,7 @@ public class Template {
         text = NSString(bytesNoCopy: UnsafeMutablePointer<Void>(data.bytes), length: data.length, encoding: encoding, freeWhenDone: false)
     }
 
-    convenience init(fileURL: NSURL) {
+    public convenience init(fileURL: NSURL) {
         self.init(fileURL: fileURL, encoding: NSUTF8StringEncoding)
     }
 }
