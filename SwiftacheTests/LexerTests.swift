@@ -116,16 +116,4 @@ class LexerTests: XCTestCase {
         XCTAssertEqual(tokens.count, 58, "Wrong token count!")
     }
 
-    func testComplexFilePerformance() {
-        let fileURL = NSBundle.mainBundle().URLForResource("list", withExtension: "html")
-        XCTAssertNotNil(fileURL, "Missing template.")
-        measureBlock {
-            let lexer = self.lexerWithFile(fileURL!)
-            var token: Token!
-            do {
-                token = lexer.getToken()
-            } while token.type != .EOF
-        }
-    }
-
 }

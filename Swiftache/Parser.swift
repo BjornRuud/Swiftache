@@ -9,13 +9,13 @@
 import Foundation
 
 private let ParserErrorDomain = "net.bjornruud.Swiftache.Parser"
-private let RootSectionName = "___root___"
+private let RootSectionName = "ROOT"
 
-public typealias Context = [String: Any]
+public typealias TemplateContext = [String: Any]
 
 class Section {
     var name: String
-    var contexts = [Context]()
+    var contexts = [TemplateContext]()
     var activeContextIndex = 0
     var position = 0
     var shouldRender = true
@@ -28,6 +28,13 @@ class Section {
 public class Parser {
     public let lexer: Lexer
     public var renderTarget: RenderTarget?
+    public var template: Template {
+        return lexer.template
+    }
+
+    public private(set) var error: NSError?
+    public private(set) var errorLocation: TextLocation?
+    public private(set) var errorTemplate: Template?
 
     private var sectionStack = [Section]()
     private var stopParsing = false
@@ -42,9 +49,22 @@ public class Parser {
         renderTarget = target
     }
 
+    func reset() {
+        sectionStack = [Section]()
+        lexer.reset()
+        stopParsing = false
+    }
+
+    func resetError() {
+        error = nil
+        errorLocation = nil
+        errorTemplate = nil
+    }
+
     // MARK: - Parsing
 
-    public func parseWithContext(context: Context) {
+    public func parseWithContext(context: TemplateContext) {
+        resetError()
         // Add root section
         let section = Section(name: RootSectionName)
         section.contexts.append(context)
@@ -52,9 +72,7 @@ public class Parser {
         while !stopParsing {
             parseStart()
         }
-        sectionStack.pop()
-        lexer.reset()
-        stopParsing = false
+        reset()
     }
 
     func parseStart() {
@@ -63,12 +81,15 @@ public class Parser {
         switch currentToken.type {
         case .EOF:
             stopParsing = true
-            // EOF is an error if there are unprocessed sections
+            // End of file is an error if there are unprocessed sections
             if sectionStack.count > 1 {
-                // Report error
+                let section = sectionStack.last!
+                let msg = NSLocalizedString(
+                    "\(currentToken.type.toRaw()) token in middle of section \(section.name)",
+                    comment: "EOF in middle of section")
+                reportError(msg)
             }
         case .StaticText:
-            // Render text
             renderToken(currentToken, escaped: false)
         case .TagBegin:
             parseTag(currentToken)
@@ -76,8 +97,11 @@ public class Parser {
             parseTriple(currentToken)
         default:
             // Invalid token
-            let loc = lexer.textLocationForRange(currentToken.textRange)
-            stopParsing = true
+            let section = sectionStack.last!
+            let msg = NSLocalizedString(
+                "Invalid top level token \(currentToken.type.toRaw()) in section \(section.name)",
+                comment: "Invalid token at top level in section")
+            reportError(msg)
         }
     }
 
@@ -111,19 +135,20 @@ public class Parser {
 
         // If we get here this is a normal tag with an identifier
         if currentToken.type != .Identifier {
-            // Not expected token, report error
-            stopParsing = true
+            // Not expected token
+            reportExpectedTokenError(.Identifier, gotToken: currentToken.type)
             return
         }
-
-        renderToken(currentToken, escaped: escape)
+        let contentToken = currentToken
 
         // Verify end token
         currentToken = lexer.getToken()
         if currentToken.type != .TagEnd {
-            stopParsing = true
+            reportExpectedTokenError(.TagEnd, gotToken: currentToken.type)
             return
         }
+
+        renderToken(contentToken, escaped: escape)
     }
 
     func parseComment(beginToken: Token) {
@@ -138,13 +163,16 @@ public class Parser {
             return
         default:
             // Invalid token, report error
-            stopParsing = true
+            let msg = NSLocalizedString(
+                "Invalid token \(currentToken.type.toRaw()) in comment",
+                comment: "Invalid token in comment")
+            reportError(msg)
             return
         }
 
         currentToken = lexer.getToken()
         if currentToken.type != .TagEnd {
-            stopParsing = true
+            reportExpectedTokenError(.TagEnd, gotToken: currentToken.type)
             return
         }
     }
@@ -157,7 +185,7 @@ public class Parser {
         switch currentToken.type {
         case .PartialName:
             // Validate partial file name
-            let name = lexer.template.text.substringWithRange(currentToken.textRange)
+            let name = template.text.substringWithRange(currentToken.textRange)
             fileURL = NSBundle.mainBundle().URLForResource(name, withExtension: nil)
             if fileURL == nil {
                 // File not found
@@ -165,130 +193,155 @@ public class Parser {
             }
         default:
             // Invalid token, report error
-            stopParsing = true
+            let msg = NSLocalizedString(
+                "Unexpected token \(currentToken.type.toRaw()) in partial",
+                comment: "Unexpected token in partial")
+            reportError(msg)
             return
         }
 
         currentToken = lexer.getToken()
         if currentToken.type != .TagEnd {
-            stopParsing = true
+            reportExpectedTokenError(.TagEnd, gotToken: currentToken.type)
             return
         }
 
         // Create parser for included template and parse it
-        if fileURL != nil {
-            let partialTemplate = Template(fileURL: fileURL!)
-            let partialLexer = Lexer(template: partialTemplate)
-            let partialParser = Parser(lexer: partialLexer)
-            partialParser.renderTarget = renderTarget
-            // Partials use the root context
-            partialParser.parseWithContext(sectionStack[0].contexts[0])
-            // TODO: Error checking
+        if fileURL == nil {
+            return
+        }
+        let partialTemplate = Template(fileURL: fileURL!)
+        let partialLexer = Lexer(template: partialTemplate)
+        let partialParser = Parser(lexer: partialLexer)
+        partialParser.renderTarget = renderTarget
+        // Partials use the root context
+        partialParser.parseWithContext(sectionStack[0].contexts[0])
+        if partialParser.error != nil {
+            error = partialParser.error
+            errorLocation = partialParser.errorLocation
+            errorTemplate = partialParser.errorTemplate
+            stopParsing = true
         }
     }
 
     func parseSection(beginToken: Token, typeToken: Token) {
+        let inverted = typeToken.type == .SectionBeginInverted ? true : false
+
         currentToken = lexer.getToken()
         var section: Section!
         // Expected tokens are section name followed by closing tag
         switch currentToken.type {
         case .Identifier:
-            let sectionName = lexer.template.text.substringWithRange(currentToken.textRange)
+            let sectionName = template.text.substringWithRange(currentToken.textRange)
             section = Section(name: sectionName)
+
+            // Parent doesn't render, neither does child
+            let parentSection = sectionStack.last!
+            if !parentSection.shouldRender {
+                section.shouldRender = false
+                break
+            }
 
             // Look for section in current context
             let sectionValue = valueForIdentifier(sectionName)
-            // Sections are activated by a bool or by an array
+            // Sections are activated by a bool, a context or an array
             if sectionValue == nil {
-                section.shouldRender = false
+                section.shouldRender = inverted
+                section.contexts = parentSection.contexts
             }
             else if let boolValue = sectionValue as? Bool {
-                section.shouldRender = boolValue
-                if boolValue {
-                    // Section with bool uses root context
-                    section.contexts = sectionStack[0].contexts
-                }
+                section.shouldRender = inverted ? !boolValue : boolValue
+                // Section with bool uses parent context
+                section.contexts = parentSection.contexts
             }
-            else if let arrayValue = sectionValue as? [Context] {
+            else if let contextValue = sectionValue as? TemplateContext {
+                section.contexts.append(contextValue)
+                section.shouldRender = contextValue.count == 0 ? inverted : !inverted
+            }
+            else if let arrayValue = sectionValue as? [TemplateContext] {
                 section.contexts.extend(arrayValue)
-                if section.contexts.count == 0 {
-                    section.shouldRender = false
-                }
+                section.shouldRender = section.contexts.count == 0 ? inverted : !inverted
             }
             else {
-                // Section value is not supported
-                section.shouldRender = false
+                // Section value type is not supported
+                section.shouldRender = inverted
             }
-            sectionStack.push(section)
         default:
-            // Invalid token, report error
-            stopParsing = true
+            // Unexpected token, report error
+            reportExpectedTokenError(.Identifier, gotToken: currentToken.type)
             return
         }
 
         currentToken = lexer.getToken()
         if currentToken.type != .TagEnd {
-            sectionStack.pop()
-            stopParsing = true
+            reportExpectedTokenError(.TagEnd, gotToken: currentToken.type)
             return
         }
+
         section.position = currentToken.textRange.location + currentToken.textRange.length
+        sectionStack.push(section)
     }
 
     func parseSectionEnd(beginToken: Token) {
         currentToken = lexer.getToken()
+        var section: Section!
         switch currentToken.type {
         case .Identifier:
-            let section = sectionStack.last!
-            let sectionName = lexer.template.text.substringWithRange(currentToken.textRange)
+            section = sectionStack.last
+            let sectionName = template.text.substringWithRange(currentToken.textRange)
             if sectionName != section.name {
                 // End of wrong section
-                stopParsing = true
-                return
-            }
-            // See if we need another iteration
-            if section.activeContextIndex < section.contexts.count - 1 {
-                section.activeContextIndex++
-                lexer.setPosition(section.position)
+                let msg = NSLocalizedString(
+                    "Found end of section \(sectionName), expected end of section \(section.name)",
+                    comment: "End of wrong section")
+                reportError(msg)
                 return
             }
         default:
-            // Invalid token, report error
-            stopParsing = true
+            // Unexpected token, report error
+            reportExpectedTokenError(.Identifier, gotToken: currentToken.type)
             return
         }
 
         currentToken = lexer.getToken()
         if currentToken.type != .TagEnd {
-            stopParsing = true
+            reportExpectedTokenError(.TagEnd, gotToken: currentToken.type)
             return
         }
-        // Section is done
+
+        // Section is done, see if we need another iteration
+        if section.activeContextIndex < section.contexts.count - 1 {
+            section.activeContextIndex++
+            lexer.setPosition(section.position)
+            return
+        }
         sectionStack.pop()
     }
 
     func parseTriple(beginToken: Token) {
         currentToken = lexer.getToken()
         // Expected tokens are optional identifier followed by closing tag
+        var contentToken: Token!
         switch currentToken.type {
         case .Identifier:
-            // Validate and render (unescaped)
-            renderToken(currentToken, escaped: false)
+            contentToken = currentToken
         case .TripleEnd:
             // Empty tag
             return
         default:
             // Invalid token, report error
-            stopParsing = true
+            reportExpectedTokenError(.Identifier, gotToken: currentToken.type)
             return
         }
 
         // Check closing tag
         currentToken = lexer.getToken()
         if currentToken.type != .TripleEnd {
-            stopParsing = true
+            reportExpectedTokenError(.TripleEnd, gotToken: currentToken.type)
             return
         }
+
+        renderToken(contentToken, escaped: false)
     }
 
     // MARK: - Rendering
@@ -308,7 +361,7 @@ public class Parser {
         switch token.type {
         case .Identifier:
             // Lookup identifier in current context
-            let name = lexer.template.text.substringWithRange(token.textRange)
+            let name = template.text.substringWithRange(token.textRange)
             let value = valueForIdentifier(name)
             if let valueString = value as? String {
                 text = valueString
@@ -316,7 +369,7 @@ public class Parser {
                 text = ""
             }
         case .StaticText:
-            text = lexer.template.text.substringWithRange(token.textRange)
+            text = template.text.substringWithRange(token.textRange)
         default:
             // Token is not renderable
             return
@@ -326,6 +379,20 @@ public class Parser {
     }
 
     // MARK: - Private methods
+
+    private func reportError(message: String, stop: Bool = true) {
+        error = NSError(domain: ParserErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: message])
+        errorLocation = lexer.textLocationForRange(currentToken.textRange)
+        errorTemplate = lexer.template
+        stopParsing = stop
+    }
+
+    private func reportExpectedTokenError(expectedToken: TokenType, gotToken: TokenType, stop: Bool = true) {
+        let msg = NSLocalizedString(
+            "Expected \(expectedToken.toRaw()) token, got \(gotToken.toRaw())",
+            comment: "Expected token error")
+        reportError(msg, stop: stop)
+    }
 
     private func valueForIdentifier(identifier: String) -> Any? {
         let section = sectionStack.last!
