@@ -21,15 +21,18 @@ class SwiftacheTests: XCTestCase {
         super.tearDown()
     }
 
-    func testLexer() {
-        let singleExample = "Behold, Mustache!\n{{awesome}}"
-        let sectionExample = "Test\u{2028} {{#section}}Yo! {{! FIXME \u{1F60E}}}{{& yo}}{{/section}}\n{{{triple_madness}}}\r\nThe End"
-
-        let template = Template(text: sectionExample)
-        let lexer = Lexer(template: template)
-        let tokens = lexer.allTokens()
-        let location = lexer.textLocationForRange(tokens[tokens.endIndex - 1].textRange)
-        println("pos: \(location.position), line: \(location.line), col: \(location.column)")
+    func testStringTarget() {
+        let stache = Swiftache()
+        let rendered = stache.render("A{{#a}}{{b}}{{/a}}C", context: ["a": true, "b": "B"])
+        XCTAssertTrue(rendered, "Render failed.")
+        XCTAssertEqual(stache.target!.text, "ABC", "Wrong parse output.")
     }
 
+    func testFileTarget() {
+        let url = cachesURL().URLByAppendingPathComponent("file test.html")
+        let stache = Swiftache()
+        let rendered = stache.render("A{{#a}}{{b}}{{/a}}C", context: ["a": true, "b": "B"], target: FileRenderTarget(fileURL: url))
+        XCTAssertTrue(rendered, "Render failed.")
+        XCTAssertEqual(stache.target!.text, "ABC", "Wrong parse output.")
+    }
 }

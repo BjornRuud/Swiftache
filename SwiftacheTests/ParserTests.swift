@@ -21,60 +21,53 @@ class ParserTests: XCTestCase {
         super.tearDown()
     }
 
-    func parserForText(text: String) -> Parser {
-        let template = Template(text: text)
-        let lexer = Lexer(template: template)
-        let target = StringRenderTarget()
-        return Parser(lexer: lexer, target: target)
-    }
-
     func testComment() {
-        let parser = parserForText("A {{! comment here }}B")
-        let context: TemplateContext = [:]
+        let parser = newParser("A {{! comment here }}B")
+        let context: RenderContext = [:]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "A B")
     }
 
     func testTextEscape() {
-        var parser = parserForText("{{a}}")
+        var parser = newParser("{{a}}")
         let escapeChars = "&\"'<>"
-        let context: TemplateContext = ["a": escapeChars]
+        let context: RenderContext = ["a": escapeChars]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, escapeChars.stringByEscapingXMLEntities)
 
-        parser = parserForText("{{{a}}}")
+        parser = newParser("{{{a}}}")
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, escapeChars)
 
-        parser = parserForText("{{&a}}")
+        parser = newParser("{{&a}}")
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, escapeChars)
     }
     func testIdentifier() {
-        let parser = parserForText("{{a}}")
-        let context: TemplateContext = ["a": "A"]
+        let parser = newParser("{{a}}")
+        let context: RenderContext = ["a": "A"]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "A")
     }
 
     func testPartial() {
-        let parser = parserForText("A{{> simple partial.html }}")
-        let context: TemplateContext = ["b": "B"]
+        let parser = newParser("A{{> simple partial.html }}")
+        let context: RenderContext = ["b": "B"]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "AB")
     }
 
     func testSection() {
-        let parser = parserForText("{{#a}}{{b}}{{/a}}")
-        let b: TemplateContext = ["b": "B\n"]
-        let context: TemplateContext = ["a": [b, b]]
+        let parser = newParser("{{#a}}{{b}}{{/a}}")
+        let b: RenderContext = ["b": "B\n"]
+        let context: RenderContext = ["a": [b, b]]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "B\nB\n")
     }
 
     func testSectionBool() {
-        var parser = parserForText("{{#a}}A{{/a}}")
-        var context: TemplateContext = ["a": false]
+        var parser = newParser("{{#a}}A{{/a}}")
+        var context: RenderContext = ["a": false]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "")
 
@@ -82,7 +75,7 @@ class ParserTests: XCTestCase {
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "A")
 
-        parser = parserForText("{{^a}}A{{/a}}")
+        parser = newParser("{{^a}}A{{/a}}")
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "")
 
@@ -92,32 +85,32 @@ class ParserTests: XCTestCase {
 }
 
     func testSectionContext() {
-        var parser = parserForText("{{^a}}{{b}}{{/a}}")
-        var b: TemplateContext = ["b": "B"]
-        var a: TemplateContext = ["a": b]
+        var parser = newParser("{{^a}}{{b}}{{/a}}")
+        var b: RenderContext = ["b": "B"]
+        var a: RenderContext = ["a": b]
         parser.parseWithContext(a)
         XCTAssertEqual(parser.renderTarget!.text, "")
 
-        parser = parserForText("{{#a}}{{b}}{{/a}}")
+        parser = newParser("{{#a}}{{b}}{{/a}}")
         parser.parseWithContext(a)
         XCTAssertEqual(parser.renderTarget!.text, "B")
     }
 
     func testNestedSection() {
-        var parser = parserForText("{{#a}}{{#b}}{{c}}{{/b}}{{/a}}")
-        var c: TemplateContext = ["c": "C"]
-        var a: TemplateContext = ["a": true, "b": c]
+        var parser = newParser("{{#a}}{{#b}}{{c}}{{/b}}{{/a}}")
+        var c: RenderContext = ["c": "C"]
+        var a: RenderContext = ["a": true, "b": c]
         parser.parseWithContext(a)
         XCTAssertEqual(parser.renderTarget!.text, "C")
 
-        parser = parserForText("{{^a}}{{#b}}{{c}}{{/b}}{{/a}}")
+        parser = newParser("{{^a}}{{#b}}{{c}}{{/b}}{{/a}}")
         parser.parseWithContext(a)
         XCTAssertEqual(parser.renderTarget!.text, "")
     }
 
     func testStaticText() {
-        let parser = parserForText("A")
-        let context: TemplateContext = [:]
+        let parser = newParser("A")
+        let context: RenderContext = [:]
         parser.parseWithContext(context)
         XCTAssertEqual(parser.renderTarget!.text, "A")
     }

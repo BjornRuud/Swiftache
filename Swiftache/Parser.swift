@@ -11,11 +11,9 @@ import Foundation
 private let ParserErrorDomain = "net.bjornruud.Swiftache.Parser"
 private let RootSectionName = "ROOT"
 
-public typealias TemplateContext = [String: Any]
-
 class Section {
     var name: String
-    var contexts = [TemplateContext]()
+    var contexts = [RenderContext]()
     var activeContextIndex = 0
     var position = 0
     var shouldRender = true
@@ -25,16 +23,20 @@ class Section {
     }
 }
 
-public class Parser {
-    public let lexer: Lexer
-    public var renderTarget: RenderTarget?
-    public var template: Template {
+public struct ParseError {
+    public let error: NSError
+    public let location: TextLocation
+    public let template: Template
+}
+
+class Parser {
+    let lexer: Lexer
+    var renderTarget: RenderTarget?
+    var template: Template {
         return lexer.template
     }
 
-    public private(set) var error: NSError?
-    public private(set) var errorLocation: TextLocation?
-    public private(set) var errorTemplate: Template?
+    private(set) var parseError: ParseError?
 
     private var sectionStack = [Section]()
     private var stopParsing = false
@@ -56,14 +58,12 @@ public class Parser {
     }
 
     func resetError() {
-        error = nil
-        errorLocation = nil
-        errorTemplate = nil
+        parseError = nil
     }
 
     // MARK: - Parsing
 
-    public func parseWithContext(context: TemplateContext) {
+    func parseWithContext(context: RenderContext) {
         resetError()
         // Add root section
         let section = Section(name: RootSectionName)
@@ -216,10 +216,8 @@ public class Parser {
         partialParser.renderTarget = renderTarget
         // Partials use the root context
         partialParser.parseWithContext(sectionStack[0].contexts[0])
-        if partialParser.error != nil {
-            error = partialParser.error
-            errorLocation = partialParser.errorLocation
-            errorTemplate = partialParser.errorTemplate
+        if let error = partialParser.parseError {
+            parseError = ParseError(error: error.error, location: error.location, template: error.template)
             stopParsing = true
         }
     }
@@ -254,11 +252,11 @@ public class Parser {
                 // Section with bool uses parent context
                 section.contexts = parentSection.contexts
             }
-            else if let contextValue = sectionValue as? TemplateContext {
+            else if let contextValue = sectionValue as? RenderContext {
                 section.contexts.append(contextValue)
                 section.shouldRender = contextValue.count == 0 ? inverted : !inverted
             }
-            else if let arrayValue = sectionValue as? [TemplateContext] {
+            else if let arrayValue = sectionValue as? [RenderContext] {
                 section.contexts.extend(arrayValue)
                 section.shouldRender = section.contexts.count == 0 ? inverted : !inverted
             }
@@ -347,8 +345,8 @@ public class Parser {
     // MARK: - Rendering
 
     func renderToken(token: Token, escaped: Bool = true) {
-        // Rendering needs a target
-        if renderTarget == nil {
+        // Rendering needs a target marked as renderable
+        if renderTarget == nil || renderTarget!.isRenderable == false {
             return
         }
         // Only render tokens if active section allows it
@@ -381,9 +379,8 @@ public class Parser {
     // MARK: - Private methods
 
     private func reportError(message: String, stop: Bool = true) {
-        error = NSError(domain: ParserErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: message])
-        errorLocation = lexer.textLocationForRange(currentToken.textRange)
-        errorTemplate = lexer.template
+        let error = NSError(domain: ParserErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: message])
+        parseError = ParseError(error: error, location: lexer.textLocationForRange(currentToken.textRange), template: lexer.template)
         stopParsing = stop
     }
 

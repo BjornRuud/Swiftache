@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum TokenType: String {
+enum TokenType: String {
     case Unknown = "Unknown"
     case Comment = "Comment"
     case CommentText = "CommentText"
@@ -39,7 +39,7 @@ extension TextLocation: DebugPrintable {
     }
 }
 
-public class Token: Equatable {
+class Token: Equatable {
     private(set) var type: TokenType
     private(set) var textRange: NSRange
 
@@ -50,18 +50,18 @@ public class Token: Equatable {
 }
 
 extension Token: DebugPrintable {
-    public var debugDescription: String {
+    var debugDescription: String {
         return "{\(textRange.location), \(textRange.length)} \(type.toRaw())"
     }
 }
 
-public func ==(lhs: Token, rhs: Token) -> Bool {
+func ==(lhs: Token, rhs: Token) -> Bool {
     return lhs.type == rhs.type &&
            lhs.textRange.location == rhs.textRange.location &&
            lhs.textRange.length == rhs.textRange.length
 }
 
-public class Lexer {
+class Lexer {
     let template: Template
 
     private var searchRange = NSRange(location: 0, length: 0)

@@ -9,6 +9,7 @@
 import Foundation
 
 public protocol RenderTarget {
+    var isRenderable: Bool { get set }
     var text: String { get }
     func renderText(text: String)
 }

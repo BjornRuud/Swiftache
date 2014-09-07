@@ -21,32 +21,22 @@ class LexerTests: XCTestCase {
         super.tearDown()
     }
 
-    func lexerWithFile(url: NSURL) -> Lexer {
-        let template = Template(fileURL: url)
-        return Lexer(template: template)
-    }
-
-    func lexerWithText(text: String) -> Lexer {
-        let template = Template(text: text)
-        return Lexer(template: template)
-    }
-
     func testEmptyTag() {
-        var lexer = lexerWithText("{{}}")
+        var lexer = newLexer("{{}}")
         var tokens = lexer.allTokens()
         XCTAssertEqual(tokens.count, 3, "Wrong token count for empty tag.")
 
-        lexer = lexerWithText("{{ }}")
+        lexer = newLexer("{{ }}")
         tokens = lexer.allTokens()
         XCTAssertEqual(tokens.count, 3, "Wrong token count for empty tag with space.")
 
-        lexer = lexerWithText("{{   }}")
+        lexer = newLexer("{{   }}")
         tokens = lexer.allTokens()
         XCTAssertEqual(tokens.count, 3, "Wrong token count for empty tag with 3 spaces.")
     }
 
     func testVariable() {
-        var lexer = lexerWithText("{{a}}")
+        var lexer = newLexer("{{a}}")
         var refTokens: [Token] = [
             Token(type: .TagBegin, textRange: NSRange(location: 0, length: 2)),
             Token(type: .Identifier, textRange: NSRange(location: 2, length: 1)),
@@ -56,7 +46,7 @@ class LexerTests: XCTestCase {
         var tokens = lexer.allTokens()
         XCTAssertEqual(refTokens, tokens, "Reference tokens not same as processed tokens for variable")
 
-        lexer = lexerWithText("{{ a }}")
+        lexer = newLexer("{{ a }}")
         refTokens = [
             Token(type: .TagBegin, textRange: NSRange(location: 0, length: 2)),
             Token(type: .Identifier, textRange: NSRange(location: 3, length: 1)),
@@ -77,7 +67,7 @@ class LexerTests: XCTestCase {
             (">", .Partial, .PartialName)
         ]
         for (symbol, type, contentType) in symbolTypeContent {
-            let lexer = lexerWithText("{{\(symbol)a}}")
+            let lexer = newLexer("{{\(symbol)a}}")
             let refTokens: [Token] = [
                 Token(type: .TagBegin, textRange: NSRange(location: 0, length: 2)),
                 Token(type: type, textRange: NSRange(location: 2, length: 1)),
@@ -91,7 +81,7 @@ class LexerTests: XCTestCase {
     }
 
     func testSection() {
-        var lexer = lexerWithText("{{#a}}{{/a}}")
+        var lexer = newLexer("{{#a}}{{/a}}")
         var refTokens: [Token] = [
             Token(type: .TagBegin, textRange: NSRange(location: 0, length: 2)),
             Token(type: .SectionBegin, textRange: NSRange(location: 2, length: 1)),
@@ -111,7 +101,7 @@ class LexerTests: XCTestCase {
     func testComplexFile() {
         let fileURL = NSBundle.mainBundle().URLForResource("list", withExtension: "html")
         XCTAssertNotNil(fileURL, "Missing template.")
-        let lexer = lexerWithFile(fileURL!)
+        let lexer = newLexer(fileURL!)
         let tokens = lexer.allTokens()
         XCTAssertEqual(tokens.count, 58, "Wrong token count!")
     }

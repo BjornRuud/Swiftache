@@ -9,9 +9,9 @@
 import Foundation
 
 public class Template {
-    let text: NSString
-    let fileURL: NSURL?
-    let fileEncoding: NSStringEncoding?
+    public let text: NSString
+    public let fileURL: NSURL?
+    public let fileEncoding: NSStringEncoding?
 
     private let data: NSData!
 
