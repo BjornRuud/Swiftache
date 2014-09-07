@@ -79,6 +79,7 @@
 		8ED7E31E19BC8C2C0084C4C7 /* RenderTargetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderTargetTests.swift; sourceTree = "<group>"; };
 		8ED7E32019BC8C9A0084C4C7 /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		8ED7E32219BCB8970084C4C7 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = SOURCE_ROOT; };
+		8ED7E38919BCD22C0084C4C7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +234,7 @@
 			children = (
 				8ED7E32219BCB8970084C4C7 /* LICENSE.txt */,
 				8EA1C87619B859F3000C2038 /* Mustache EBNF.txt */,
+				8ED7E38919BCD22C0084C4C7 /* README.md */,
 			);
 			path = Docs;
 			sourceTree = "<group>";
