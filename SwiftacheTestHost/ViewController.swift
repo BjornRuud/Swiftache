@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  SwiftacheTestHost
 //
-//  Created by Bjørn Olav Ruud on 07.09.14.
 //  Copyright (c) 2014 Bjørn Olav Ruud. All rights reserved.
+//  Licensed under the MIT License (MIT). See LICENSE.txt for details.
 //
 
 import UIKit
