@@ -54,6 +54,17 @@ if stache.render(inUrl,
 }
 ```
 
+Lambda usage:
+
+```swift
+let stache = Swiftache()
+let lowerABC: RenderLambda = { (text, render) -> String in
+    return "a" + render(text).lowercaseString + "c"
+}
+if stache.render("{{#a}}{{b}}{{/a}}", context: ["a": Lambda(lowerABC), "b": "B"]) {
+    println(stache.target!.text) // abc
+}
+```
 
 ## Contact
 

@@ -17,6 +17,7 @@ class Section {
     var activeContextIndex = 0
     var position = 0
     var shouldRender = true
+    var lambda: Lambda?
 
     init(name: String) {
         self.name = name
@@ -177,6 +178,61 @@ class Parser {
         }
     }
 
+    func parseLambdaSection(section: Section) {
+        // Consume tokens until end of section
+        var endToken: Token!
+        while true {
+            currentToken = lexer.getToken()
+            if currentToken.type == .EOF {
+                let msg = NSLocalizedString(
+                    "Unexpected end of file while in lambda section",
+                    comment: "Unexpected EOF in lambda section")
+                reportError(msg)
+                return
+            }
+
+            // Look for beginning of end section tag
+            if currentToken.type != .TagBegin {
+                continue
+            }
+
+            // Possible section end
+            endToken = currentToken
+            currentToken = lexer.getToken()
+            if currentToken.type != .SectionEnd {
+                continue
+            }
+
+            // Check section name
+            currentToken = lexer.getToken()
+            if currentToken.type != .Identifier {
+                reportExpectedTokenError(.Identifier, gotToken: currentToken.type)
+                return
+            }
+            let sectionName = template.text.substringWithRange(currentToken.textRange)
+
+            // Check end tag
+            currentToken = lexer.getToken()
+            if currentToken.type != .TagEnd {
+                reportExpectedTokenError(.TagEnd, gotToken: currentToken.type)
+                return
+            }
+
+            // If this is the right section, move on
+            if sectionName == section.name {
+                break
+            }
+        }
+
+        // Get substring of whole section and pass to lambda
+        let range = NSRange(location: section.position, length: endToken.textRange.location - section.position)
+        let sectionText = template.text.substringWithRange(range)
+        let lambda = section.lambda!.closure
+        let result = lambda(text: sectionText, render: lambdaRender)
+        renderTarget?.renderText(result)
+        sectionStack.pop()
+    }
+
     func parsePartial(beginToken: Token) {
         currentToken = lexer.getToken()
         // Expected tokens are partial name followed by closing tag
@@ -260,6 +316,11 @@ class Parser {
                 section.contexts.extend(arrayValue)
                 section.shouldRender = section.contexts.count == 0 ? inverted : !inverted
             }
+            else if let lambdaValue = sectionValue as? Lambda {
+                section.contexts = parentSection.contexts
+                section.lambda = lambdaValue
+                section.shouldRender = !inverted
+            }
             else {
                 // Section value type is not supported
                 section.shouldRender = inverted
@@ -278,6 +339,9 @@ class Parser {
 
         section.position = currentToken.textRange.location + currentToken.textRange.length
         sectionStack.push(section)
+        if section.lambda != nil {
+            parseLambdaSection(section)
+        }
     }
 
     func parseSectionEnd(beginToken: Token) {
@@ -377,6 +441,19 @@ class Parser {
     }
 
     // MARK: - Private methods
+
+    private func lambdaRender(text: String) -> String {
+        let template = Template(text: text)
+        let lexer = Lexer(template: template)
+        let parser = Parser(lexer: lexer)
+        parser.renderTarget = StringRenderTarget()
+
+        let section = sectionStack.last!
+        let context = section.contexts.count > 0 ? section.contexts[section.activeContextIndex] : RenderContext()
+        parser.parseWithContext(context)
+
+        return parser.renderTarget!.text
+    }
 
     private func reportError(message: String, stop: Bool = true) {
         let error = NSError(domain: ParserErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: message])

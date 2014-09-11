@@ -50,6 +50,24 @@ class ParserTests: XCTestCase {
         XCTAssertEqual(parser.renderTarget!.text, "A")
     }
 
+    func testLambda() {
+        var parser = newParser("{{#a}}{{b}}{{/a}}")
+        var lambda = { (text: String, render: RenderFunction) -> String in
+            return render(text).uppercaseString
+        }
+        var context: RenderContext = ["a": Lambda(lambda), "b": "abc"]
+        parser.parseWithContext(context)
+        XCTAssertEqual(parser.renderTarget!.text, "ABC")
+
+        parser = newParser("{{#a}}{{b}}{{/a}}")
+        lambda = { (text: String, render: RenderFunction) -> String in
+            return "<i>" + render(text).lowercaseString + "</i>"
+        }
+        context = ["a": Lambda(lambda), "b": "ABC"]
+        parser.parseWithContext(context)
+        XCTAssertEqual(parser.renderTarget!.text, "<i>abc</i>")
+    }
+
     func testPartial() {
         let parser = newParser("A{{> simple partial.html }}")
         let context: RenderContext = ["b": "B"]
