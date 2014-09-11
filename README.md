@@ -66,6 +66,12 @@ if stache.render("{{#a}}{{b}}{{/a}}", context: ["a": Lambda(lowerABC), "b": "B"]
 }
 ```
 
+## ToDo
+
+- Implement a "proper" scanner instead of a regex based one. Not really necessary, more a performance experiment.
+- Content of static text tokens are read entirely into memory when rendered to a target. There should be a maximum read length to keep memory usage low.
+
+
 ## Contact
 
 Twitter: [@BjornRuud](https://twitter.com/BjornRuud)
