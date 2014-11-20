@@ -52,7 +52,7 @@ class ParserTests: XCTestCase {
 
     func testLambda() {
         var parser = newParser("{{#a}}{{b}}{{/a}}")
-        var lambda = { (text: String, render: RenderFunction) -> String in
+        var lambda: Lambda = { (text, render) -> String in
             return render(text).uppercaseString
         }
         var context: RenderContext = ["a": lambda, "b": "abc"]
@@ -60,7 +60,7 @@ class ParserTests: XCTestCase {
         XCTAssertEqual(parser.renderTarget!.text, "ABC")
 
         parser = newParser("{{#a}}{{b}}{{/a}}")
-        lambda = { (text: String, render: RenderFunction) -> String in
+        lambda = { (text, render) -> String in
             return "<i>" + render(text).lowercaseString + "</i>"
         }
         context = ["a": lambda, "b": "ABC"]

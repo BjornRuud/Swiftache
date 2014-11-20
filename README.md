@@ -36,7 +36,7 @@ let outUrl = NSURL(fileURLWithPath: "path/to/file")
 let stache = Swiftache()
 if stache.render("A{{#a}}{{b}}{{/a}}C",
                  context: ["a": true, "b": "B"],
-                 target: FileRenderTarget(fileURL: url)) {
+                 target: FileRenderTarget(fileURL: outUrl)) {
     println(stache.target!.text) // ABC
 }
 ```
@@ -49,7 +49,7 @@ let outUrl = NSURL(fileURLWithPath: "path/to/outfile")
 let stache = Swiftache()
 if stache.render(inUrl,
                  context: ["a": true, "b": "B"],
-                 target: FileRenderTarget(fileURL: url)) {
+                 target: FileRenderTarget(fileURL: outUrl)) {
     println(stache.target!.text) // ABC
 }
 ```
@@ -58,7 +58,7 @@ Lambda usage:
 
 ```swift
 let stache = Swiftache()
-let lowerABC = { (text, render) -> String in
+let lowerABC: Lambda = { (text, render) -> String in
     return "a" + render(text).lowercaseString + "c"
 }
 if stache.render("{{#a}}{{b}}{{/a}}", context: ["a": lowerABC, "b": "B"]) {
