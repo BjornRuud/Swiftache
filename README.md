@@ -58,10 +58,10 @@ Lambda usage:
 
 ```swift
 let stache = Swiftache()
-let lowerABC: RenderLambda = { (text, render) -> String in
+let lowerABC = { (text, render) -> String in
     return "a" + render(text).lowercaseString + "c"
 }
-if stache.render("{{#a}}{{b}}{{/a}}", context: ["a": Lambda(lowerABC), "b": "B"]) {
+if stache.render("{{#a}}{{b}}{{/a}}", context: ["a": lowerABC, "b": "B"]) {
     println(stache.target!.text) // abc
 }
 ```

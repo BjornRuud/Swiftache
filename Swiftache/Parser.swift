@@ -227,7 +227,7 @@ class Parser {
         // Get substring of whole section and pass to lambda
         let range = NSRange(location: section.position, length: endToken.textRange.location - section.position)
         let sectionText = template.text.substringWithRange(range)
-        let lambda = section.lambda!.closure
+        let lambda = section.lambda!
         let result = lambda(text: sectionText, render: lambdaRender)
         renderTarget?.renderText(result)
         sectionStack.pop()

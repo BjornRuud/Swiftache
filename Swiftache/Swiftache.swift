@@ -10,15 +10,7 @@ import Foundation
 
 public typealias RenderContext = [String: Any]
 public typealias RenderFunction = (String) -> String
-public typealias RenderLambda = (text: String, render: RenderFunction) -> String
-
-// Wrap closure in struct to avoid compiler crash when stored as Any in RenderContext
-public struct Lambda {
-    let closure: RenderLambda
-    init(_ closure: RenderLambda) {
-        self.closure = closure
-    }
-}
+public typealias Lambda = (text: String, render: RenderFunction) -> String
 
 public class Swiftache {
     public var template: Template?
