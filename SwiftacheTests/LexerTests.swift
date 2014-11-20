@@ -76,7 +76,7 @@ class LexerTests: XCTestCase {
                 Token(type: .EOF, textRange: NSRange(location: 6, length: 0))
             ]
             let tokens = lexer.allTokens()
-            XCTAssertEqual(refTokens, tokens, "Reference tokens not same as processed tokens for tag type \(symbol) (\(type.toRaw()))")
+            XCTAssertEqual(refTokens, tokens, "Reference tokens not same as processed tokens for tag type \(symbol) (\(type.rawValue))")
         }
     }
 

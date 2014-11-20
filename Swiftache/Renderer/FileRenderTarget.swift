@@ -48,7 +48,7 @@ extension FileRenderTarget: RenderTarget {
         if fileURL == nil {
             return ""
         }
-        return NSString(contentsOfURL: fileURL!, encoding: fileEncoding, error: nil)
+        return NSString(contentsOfURL: fileURL!, encoding: fileEncoding, error: nil)!
     }
 
     public func renderText(text: String) {

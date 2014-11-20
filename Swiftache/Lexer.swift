@@ -51,7 +51,7 @@ class Token: Equatable {
 
 extension Token: DebugPrintable {
     var debugDescription: String {
-        return "{\(textRange.location), \(textRange.length)} \(type.toRaw())"
+        return "{\(textRange.location), \(textRange.length)} \(type.rawValue)"
     }
 }
 
@@ -68,10 +68,10 @@ class Lexer {
     private var tagRange = NSRange(location: 0, length: 0)
     private var tokenQueue = [Token]()
 
-    private let tagBeginRegex = NSRegularExpression(pattern: "\\{\\{\\{?", options: .UseUnicodeWordBoundaries, error: nil)
-    private let tagEndRegex = NSRegularExpression(pattern: "\\}?\\}\\}", options: .UseUnicodeWordBoundaries, error: nil)
-    private let identifierRegex = NSRegularExpression(pattern: "^\\s*(.*?)\\s*$", options: .UseUnicodeWordBoundaries | .DotMatchesLineSeparators, error: nil)
-    private let newlineRegex = NSRegularExpression(pattern: "\\r\\n|\\n|\\r|\\u2028|\\u2029", options: .UseUnicodeWordBoundaries, error: nil)
+    private let tagBeginRegex = NSRegularExpression(pattern: "\\{\\{\\{?", options: .UseUnicodeWordBoundaries, error: nil)!
+    private let tagEndRegex = NSRegularExpression(pattern: "\\}?\\}\\}", options: .UseUnicodeWordBoundaries, error: nil)!
+    private let identifierRegex = NSRegularExpression(pattern: "^\\s*(.*?)\\s*$", options: .UseUnicodeWordBoundaries | .DotMatchesLineSeparators, error: nil)!
+    private let newlineRegex = NSRegularExpression(pattern: "\\r\\n|\\n|\\r|\\u2028|\\u2029", options: .UseUnicodeWordBoundaries, error: nil)!
 
     init(template: Template) {
         self.template = template

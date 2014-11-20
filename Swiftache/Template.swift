@@ -26,7 +26,7 @@ public class Template {
         var dataError = NSErrorPointer()
         let possibleData: NSData? = NSData(contentsOfURL: fileURL, options: .DataReadingMappedAlways, error: dataError)
         data = possibleData ?? NSData()
-        text = NSString(bytesNoCopy: UnsafeMutablePointer<Void>(data.bytes), length: data.length, encoding: encoding, freeWhenDone: false)
+        text = NSString(bytesNoCopy: UnsafeMutablePointer<Void>(data.bytes), length: data.length, encoding: encoding, freeWhenDone: false)!
     }
 
     public convenience init(fileURL: NSURL) {

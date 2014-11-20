@@ -86,7 +86,7 @@ class Parser {
             if sectionStack.count > 1 {
                 let section = sectionStack.last!
                 let msg = NSLocalizedString(
-                    "\(currentToken.type.toRaw()) token in middle of section \(section.name)",
+                    "\(currentToken.type.rawValue) token in middle of section \(section.name)",
                     comment: "EOF in middle of section")
                 reportError(msg)
             }
@@ -100,7 +100,7 @@ class Parser {
             // Invalid token
             let section = sectionStack.last!
             let msg = NSLocalizedString(
-                "Invalid top level token \(currentToken.type.toRaw()) in section \(section.name)",
+                "Invalid top level token \(currentToken.type.rawValue) in section \(section.name)",
                 comment: "Invalid token at top level in section")
             reportError(msg)
         }
@@ -165,7 +165,7 @@ class Parser {
         default:
             // Invalid token, report error
             let msg = NSLocalizedString(
-                "Invalid token \(currentToken.type.toRaw()) in comment",
+                "Invalid token \(currentToken.type.rawValue) in comment",
                 comment: "Invalid token in comment")
             reportError(msg)
             return
@@ -250,7 +250,7 @@ class Parser {
         default:
             // Invalid token, report error
             let msg = NSLocalizedString(
-                "Unexpected token \(currentToken.type.toRaw()) in partial",
+                "Unexpected token \(currentToken.type.rawValue) in partial",
                 comment: "Unexpected token in partial")
             reportError(msg)
             return
@@ -463,7 +463,7 @@ class Parser {
 
     private func reportExpectedTokenError(expectedToken: TokenType, gotToken: TokenType, stop: Bool = true) {
         let msg = NSLocalizedString(
-            "Expected \(expectedToken.toRaw()) token, got \(gotToken.toRaw())",
+            "Expected \(expectedToken.rawValue) token, got \(gotToken.rawValue)",
             comment: "Expected token error")
         reportError(msg, stop: stop)
     }
